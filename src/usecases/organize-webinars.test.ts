@@ -1,6 +1,7 @@
 import { FixedDateGenerator } from 'src/adapters/fixed-date-generator';
 import { FixedIdGenerator } from 'src/adapters/fixed-id-generator';
 import { InMemoryWebinarRepository } from 'src/adapters/in-memory-webinar-repository';
+import { User } from 'src/entities/user.entity';
 import { Webinar } from 'src/entities/webinar.entity';
 import { IDateGenerator } from 'src/ports/date-generator.interface';
 import { IIdGenerator } from 'src/ports/id-generator.interface';
@@ -11,7 +12,11 @@ describe('Feature: Organize webinars', () => {
   let idGenerator: IIdGenerator;
   let useCase: OrganizeWebinars;
   let dateGenerator: IDateGenerator;
+  const user = new User({
+    id: 'john-doe-id',
+  });
   const payload = {
+    user,
     title: 'Webinar title',
     seats: 100,
     startDate: new Date('2024-01-10T10:00:00.000Z'),
@@ -22,6 +27,7 @@ describe('Feature: Organize webinars', () => {
     expect(webinar).toEqual({
       props: {
         id: 'id-1',
+        organizerId: 'john-doe-id',
         title: 'Webinar title',
         startDate: new Date('2024-01-10T10:00:00.000Z'),
         endDate: new Date('2024-01-10T11:00:00.000Z'),
@@ -54,6 +60,7 @@ describe('Feature: Organize webinars', () => {
 
   describe('Scenario: webinar happens too soon', () => {
     const payload = {
+      user,
       title: 'Webinar title',
       seats: 100,
       startDate: new Date('2024-01-03T23:59:59.000Z'),
@@ -77,6 +84,7 @@ describe('Feature: Organize webinars', () => {
 
   describe('Scenario: webinar has too many seats', () => {
     const payload = {
+      user,
       title: 'Webinar title',
       seats: 1001,
       startDate: new Date('2024-01-10T10:00:00.000Z'),
@@ -100,6 +108,7 @@ describe('Feature: Organize webinars', () => {
 
   describe('Scenario: webinar does not have enough seats', () => {
     const payload = {
+      user,
       title: 'Webinar title',
       seats: 0,
       startDate: new Date('2024-01-10T10:00:00.000Z'),

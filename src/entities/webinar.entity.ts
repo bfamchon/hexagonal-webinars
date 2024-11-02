@@ -2,6 +2,7 @@ import { differenceInDays } from 'date-fns';
 
 type WebinarProps = {
   id: string;
+  organizerId: string;
   title: string;
   startDate: Date;
   endDate: Date;
