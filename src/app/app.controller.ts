@@ -1,5 +1,7 @@
 import { Body, Controller, Get, Post } from '@nestjs/common';
+import { WebinarAPI } from 'src/app/contract';
 import { User } from 'src/entities/user.entity';
+import { ZodValidationPipe } from 'src/pipes/zod-validation.pipe';
 import { OrganizeWebinars } from 'src/usecases/organize-webinars';
 import { AppService } from './app.service';
 
@@ -17,14 +19,9 @@ export class AppController {
 
   @Post('/webinars')
   async handleOrganizeWebinar(
-    @Body()
-    body: {
-      title: string;
-      seats: number;
-      startDate: string;
-      endDate: string;
-    },
-  ) {
+    @Body(new ZodValidationPipe(WebinarAPI.OrganizeWebinar.schema))
+    body: WebinarAPI.OrganizeWebinar.Request,
+  ): Promise<WebinarAPI.OrganizeWebinar.Response> {
     return this.organizeWebinar.execute({
       user: new User({
         id: 'john-doe-id',
