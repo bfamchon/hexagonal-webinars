@@ -1,36 +1,21 @@
-import { INestApplication } from '@nestjs/common';
-import { Test } from '@nestjs/testing';
 import { addDays } from 'date-fns';
-import { InMemoryUserRepository } from 'src/adapters/in-memory-user-repository';
 import { InMemoryWebinarRepository } from 'src/adapters/in-memory-webinar-repository';
-import { User } from 'src/entities/user.entity';
+import { TestApp } from 'src/tests/test-app';
+import { e2eUserSeeds } from 'src/tests/user-seeds';
 import * as request from 'supertest';
-import { AppModule } from '../app/app.module';
 
 describe('Feature: Organize webinar', () => {
-  let app: INestApplication;
-  const user = new User({
-    id: 'john-doe-id',
-    email: 'johndoe@gmail.com',
-    password: 'azerty',
-  });
-  const token = Buffer.from(
-    `${user.props.email}:${user.props.password}`,
-  ).toString('base64');
+  let app: TestApp;
 
   beforeEach(async () => {
-    const module = await Test.createTestingModule({
-      imports: [AppModule],
-    }).compile();
-    app = module.createNestApplication();
-    await app.init();
+    app = new TestApp();
+    await app.setup();
 
-    const userRepository = app.get(InMemoryUserRepository);
-    await userRepository.create(user);
+    await app.loadFixtures([e2eUserSeeds.johnDoe]);
   });
 
   afterEach(async () => {
-    await app.close();
+    await app.cleanup();
   });
 
   describe('Scenario: happy path', () => {
@@ -39,7 +24,7 @@ describe('Feature: Organize webinar', () => {
       const endDate = addDays(new Date(), 5);
       const result = await request(app.getHttpServer())
         .post('/webinars')
-        .set('Authorization', `Basic ${token}`)
+        .set('Authorization', e2eUserSeeds.johnDoe.createAuthorizationToken())
         .send({
           title: 'Webinar title',
           seats: 100,
@@ -50,7 +35,9 @@ describe('Feature: Organize webinar', () => {
       expect(result.status).toBe(201);
       expect(result.body).toEqual({ id: expect.any(String) });
 
-      const webinarRepository = app.get(InMemoryWebinarRepository);
+      const webinarRepository = app.get<InMemoryWebinarRepository>(
+        InMemoryWebinarRepository,
+      );
       const webinar = await webinarRepository.database[0];
 
       expect(webinar.props).toEqual({
