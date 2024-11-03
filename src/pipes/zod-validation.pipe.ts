@@ -7,7 +7,7 @@ export class ZodValidationPipe {
   async transform(value) {
     const result = this.schema.safeParse(value);
     if (result.success) {
-      return result;
+      return result.data;
     }
     throw new BadRequestException('Failed to validate');
   }
