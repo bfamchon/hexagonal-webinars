@@ -1,10 +1,10 @@
 import { addDays } from 'date-fns';
+import { e2eUserSeeds } from 'src/tests/seeds/user-seeds';
+import { TestApp } from 'src/tests/utils/test-app';
 import {
   I_WEBINAR_REPOSITORY,
   IWebinarRepository,
-} from 'src/ports/webinar-repository.interface';
-import { TestApp } from 'src/tests/test-app';
-import { e2eUserSeeds } from 'src/tests/user-seeds';
+} from 'src/webinars/ports/webinar-repository.interface';
 import * as request from 'supertest';
 
 describe('Feature: Organize webinar', () => {
