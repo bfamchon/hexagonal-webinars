@@ -14,6 +14,8 @@ describe('Feature: Organize webinars', () => {
   let dateGenerator: IDateGenerator;
   const user = new User({
     id: 'john-doe-id',
+    email: 'johndoe@gmail.com',
+    password: 'azerty',
   });
   const payload = {
     user,

@@ -25,6 +25,8 @@ export class AppController {
     return this.organizeWebinar.execute({
       user: new User({
         id: 'john-doe-id',
+        email: 'johndoe@gmail.com',
+        password: 'azerty',
       }),
       title: body.title,
       seats: body.seats,
