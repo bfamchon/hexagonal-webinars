@@ -1,5 +1,8 @@
 import { addDays } from 'date-fns';
-import { InMemoryWebinarRepository } from 'src/adapters/in-memory-webinar-repository';
+import {
+  I_WEBINAR_REPOSITORY,
+  IWebinarRepository,
+} from 'src/ports/webinar-repository.interface';
 import { TestApp } from 'src/tests/test-app';
 import { e2eUserSeeds } from 'src/tests/user-seeds';
 import * as request from 'supertest';
@@ -35,12 +38,11 @@ describe('Feature: Organize webinar', () => {
       expect(result.status).toBe(201);
       expect(result.body).toEqual({ id: expect.any(String) });
 
-      const webinarRepository = app.get<InMemoryWebinarRepository>(
-        InMemoryWebinarRepository,
-      );
-      const webinar = await webinarRepository.database[0];
+      const webinarRepository =
+        app.get<IWebinarRepository>(I_WEBINAR_REPOSITORY);
+      const webinar = await webinarRepository.findById(result.body.id);
 
-      expect(webinar.props).toEqual({
+      expect(webinar!.props).toEqual({
         id: result.body.id,
         organizerId: 'john-doe-id',
         title: 'Webinar title',
