@@ -6,6 +6,7 @@ import { I_ID_GENERATOR } from 'src/core/ports/id-generator.interface';
 import { InMemoryWebinarRepository } from 'src/webinars/adapters/in-memory-webinar-repository';
 import { WebinarController } from 'src/webinars/controllers/webinar.controller';
 import { I_WEBINAR_REPOSITORY } from 'src/webinars/ports/webinar-repository.interface';
+import { ChangeSeats } from 'src/webinars/use-cases/change-seats';
 import { OrganizeWebinars } from 'src/webinars/use-cases/organize-webinars';
 
 @Module({
@@ -21,6 +22,11 @@ import { OrganizeWebinars } from 'src/webinars/use-cases/organize-webinars';
       inject: [I_WEBINAR_REPOSITORY, I_ID_GENERATOR, I_DATE_GENERATOR],
       useFactory: (repository, idGenerator, dateGenerator) =>
         new OrganizeWebinars(repository, idGenerator, dateGenerator),
+    },
+    {
+      provide: ChangeSeats,
+      inject: [I_WEBINAR_REPOSITORY],
+      useFactory: (repository) => new ChangeSeats(repository),
     },
   ],
   exports: [I_WEBINAR_REPOSITORY],

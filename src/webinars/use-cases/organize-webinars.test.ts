@@ -35,6 +35,14 @@ describe('Feature: Organize webinars', () => {
         endDate: new Date('2024-01-10T11:00:00.000Z'),
         seats: 100,
       },
+      initialState: {
+        id: 'id-1',
+        organizerId: 'john-doe-id',
+        title: 'Webinar title',
+        startDate: new Date('2024-01-10T10:00:00.000Z'),
+        endDate: new Date('2024-01-10T11:00:00.000Z'),
+        seats: 100,
+      },
     });
   }
 
