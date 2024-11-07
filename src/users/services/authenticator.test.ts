@@ -10,7 +10,7 @@ describe('Authenticator', () => {
     await userRepository.create(
       new User({
         id: 'id-1',
-        email: 'johndoe@gmail.com',
+        email: 'alice@gmail.com',
         password: 'azerty',
       }),
     );
@@ -18,15 +18,13 @@ describe('Authenticator', () => {
   });
   describe('Case: User exists', () => {
     it('should authenticate a user', async () => {
-      const payload = Buffer.from('johndoe@gmail.com:azerty').toString(
-        'base64',
-      );
+      const payload = Buffer.from('alice@gmail.com:azerty').toString('base64');
 
       const user = await authenticator.authenticate(payload);
 
       expect(user.props).toEqual({
         id: 'id-1',
-        email: 'johndoe@gmail.com',
+        email: 'alice@gmail.com',
         password: 'azerty',
       });
     });
@@ -46,9 +44,7 @@ describe('Authenticator', () => {
 
   describe('Case: Invalid password', () => {
     it('should fail', async () => {
-      const payload = Buffer.from('johndoe@gmail.com:invalid').toString(
-        'base64',
-      );
+      const payload = Buffer.from('alice@gmail.com:invalid').toString('base64');
 
       await expect(() => authenticator.authenticate(payload)).rejects.toThrow(
         'Invalid password',
