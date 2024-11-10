@@ -106,6 +106,21 @@ describe('Feature: Change dates', () => {
     });
   });
 
+  describe('Scenario: update webinar dates of someone else', () => {
+    const payload = {
+      user: testUser.bob,
+      webinarId: 'webinar-id',
+      startDate: new Date('2024-01-10T07:00:00.000Z'),
+      endDate: new Date('2024-01-10T08:00:00.000Z'),
+    };
+    it('should fail', async () => {
+      expect(useCase.execute(payload)).rejects.toThrow(
+        'User is not allowed to update this webinar',
+      );
+      expectWebinarDatesToRemainUnchanged();
+    });
+  });
+
   describe('Scenario: update the webinar too close to now', () => {
     const payload = {
       user: testUser.alice,
@@ -115,7 +130,7 @@ describe('Feature: Change dates', () => {
     };
     it('should throw an error and not update the webinar', async () => {
       expect(useCase.execute(payload)).rejects.toThrow(
-        new Error('Webinar dates are invalid'),
+        new Error('Webinar must be scheduled at least 3 days in advance'),
       );
 
       expectWebinarDatesToRemainUnchanged();
