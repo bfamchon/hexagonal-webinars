@@ -8,9 +8,11 @@ import { I_USER_REPOSITORY } from 'src/users/ports/user-repository.interface';
 import { UserModule } from 'src/users/users.module';
 import { InMemoryParticipationRepository } from 'src/webinars/adapters/in-memory-participation-repository';
 import { InMemoryWebinarRepository } from 'src/webinars/adapters/in-memory-webinar-repository';
+import { ParticipationController } from 'src/webinars/controllers/participation.controller';
 import { WebinarController } from 'src/webinars/controllers/webinar.controller';
 import { I_PARTICIPATION_REPOSITORY } from 'src/webinars/ports/participation-repository.interface';
 import { I_WEBINAR_REPOSITORY } from 'src/webinars/ports/webinar-repository.interface';
+import { BookSeat } from 'src/webinars/use-cases/book-seat';
 import { CancelWebinar } from 'src/webinars/use-cases/cancel-webinar';
 import { ChangeDates } from 'src/webinars/use-cases/change-dates';
 import { ChangeSeats } from 'src/webinars/use-cases/change-seats';
@@ -18,7 +20,7 @@ import { OrganizeWebinars } from 'src/webinars/use-cases/organize-webinars';
 
 @Module({
   imports: [CommonModule, UserModule],
-  controllers: [WebinarController],
+  controllers: [WebinarController, ParticipationController],
   providers: [
     {
       provide: I_WEBINAR_REPOSITORY,
@@ -81,6 +83,27 @@ import { OrganizeWebinars } from 'src/webinars/use-cases/organize-webinars';
           webinarRepository,
           participationRepository,
           userRepository,
+          mailer,
+        ),
+    },
+    {
+      provide: BookSeat,
+      inject: [
+        I_PARTICIPATION_REPOSITORY,
+        I_USER_REPOSITORY,
+        I_WEBINAR_REPOSITORY,
+        I_MAILER,
+      ],
+      useFactory: (
+        participationRepository,
+        userRepository,
+        webinarRepository,
+        mailer,
+      ) =>
+        new BookSeat(
+          participationRepository,
+          userRepository,
+          webinarRepository,
           mailer,
         ),
     },

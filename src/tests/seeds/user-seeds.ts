@@ -9,4 +9,11 @@ export const e2eUserSeeds = {
       password: 'azerty',
     }),
   ),
+  bob: new UserFixture(
+    new User({
+      id: 'bob-id',
+      email: 'bob@gmail.com',
+      password: 'azerty',
+    }),
+  ),
 };
