@@ -27,4 +27,12 @@ export class InMemoryParticipationRepository
   async save(participation: Participation): Promise<void> {
     this.database.push(participation);
   }
+  async delete(participation: Participation): Promise<void> {
+    const index = this.database.findIndex(
+      (p) =>
+        p.props.userId === participation.props.userId &&
+        p.props.webinarId === participation.props.webinarId,
+    );
+    this.database.splice(index, 1);
+  }
 }

@@ -13,7 +13,7 @@ export const e2eUserSeeds = {
     new User({
       id: 'bob-id',
       email: 'bob@gmail.com',
-      password: 'azerty',
+      password: 'bobisgreat',
     }),
   ),
 };

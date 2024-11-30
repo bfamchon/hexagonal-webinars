@@ -11,4 +11,5 @@ export interface IParticipationRepository {
     webinarId: string;
   }): Promise<Participation | null>;
   save(participation: Participation): Promise<void>;
+  delete(participation: Participation): Promise<void>;
 }
