@@ -1,5 +1,7 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
+import { MongooseModule } from '@nestjs/mongoose';
 import { AppController } from 'src/core/app.controller';
 import { AppService } from 'src/core/app.service';
 import { AuthGuard } from 'src/core/auth.guard';
@@ -10,7 +12,20 @@ import { UserModule } from 'src/users/users.module';
 import { WebinarModule } from 'src/webinars/webinar.module';
 
 @Module({
-  imports: [CommonModule, WebinarModule, UserModule],
+  imports: [
+    CommonModule,
+    WebinarModule,
+    UserModule,
+    MongooseModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => {
+        return {
+          uri: configService.get('DATABASE_URL'),
+        };
+      },
+    }),
+  ],
   controllers: [AppController],
   providers: [
     AppService,

@@ -15,4 +15,6 @@ export default {
   moduleNameMapper: {
     '^src/(.*)$': '<rootDir>/$1',
   },
+  globalSetup: './tests/setup/global-setup.ts',
+  globalTeardown: './tests/setup/global-teardown.ts',
 };
