@@ -15,4 +15,10 @@ export abstract class Entity<TEntity> {
   commit(): void {
     this.initialState = this.props;
   }
+
+  clone(): Entity<TEntity> {
+    return new (this.constructor as new (data: TEntity) => Entity<TEntity>)(
+      this.props,
+    );
+  }
 }
