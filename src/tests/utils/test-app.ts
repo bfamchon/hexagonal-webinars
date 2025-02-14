@@ -5,6 +5,7 @@ import { Test } from '@nestjs/testing';
 import { AppModule } from 'src/core/app.module';
 import { IFixture } from 'src/tests/utils/fixture';
 import { MongoUser } from 'src/users/adapters/mongo/mongo-user';
+import { MongoParticipation } from 'src/webinars/adapters/mongo/mongo-participation';
 import { MongoWebinar } from 'src/webinars/adapters/mongo/mongo-webinar';
 
 export class TestApp {
@@ -36,6 +37,9 @@ export class TestApp {
     await this.app.get(getModelToken(MongoUser.CollectionName)).deleteMany({});
     await this.app
       .get(getModelToken(MongoWebinar.CollectionName))
+      .deleteMany({});
+    await this.app
+      .get(getModelToken(MongoParticipation.CollectionName))
       .deleteMany({});
   }
 

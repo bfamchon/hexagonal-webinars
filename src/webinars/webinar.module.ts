@@ -7,7 +7,8 @@ import { I_ID_GENERATOR } from 'src/core/ports/id-generator.interface';
 import { I_MAILER } from 'src/core/ports/mailer.interface';
 import { I_USER_REPOSITORY } from 'src/users/ports/user-repository.interface';
 import { UserModule } from 'src/users/users.module';
-import { InMemoryParticipationRepository } from 'src/webinars/adapters/in-memory-participation-repository';
+import { MongoParticipation } from 'src/webinars/adapters/mongo/mongo-participation';
+import { MongoParticipationRepository } from 'src/webinars/adapters/mongo/mongo-participation-repository';
 import { MongoWebinar } from 'src/webinars/adapters/mongo/mongo-webinar';
 import { MongoWebinarRepository } from 'src/webinars/adapters/mongo/mongo-webinars-repository';
 import { ParticipationController } from 'src/webinars/controllers/participation.controller';
@@ -31,6 +32,12 @@ import { OrganizeWebinars } from 'src/webinars/use-cases/organize-webinars';
         schema: MongoWebinar.Schema,
       },
     ]),
+    MongooseModule.forFeature([
+      {
+        name: MongoParticipation.CollectionName,
+        schema: MongoParticipation.Schema,
+      },
+    ]),
   ],
   controllers: [WebinarController, ParticipationController],
   providers: [
@@ -41,7 +48,8 @@ import { OrganizeWebinars } from 'src/webinars/use-cases/organize-webinars';
     },
     {
       provide: I_PARTICIPATION_REPOSITORY,
-      useClass: InMemoryParticipationRepository,
+      inject: [getModelToken(MongoParticipation.CollectionName)],
+      useFactory: (model) => new MongoParticipationRepository(model),
     },
     {
       provide: OrganizeWebinars,
