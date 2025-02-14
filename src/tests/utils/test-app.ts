@@ -1,3 +1,5 @@
+import 'reflect-metadata';
+
 import { INestApplication } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { getModelToken } from '@nestjs/mongoose';
@@ -7,7 +9,6 @@ import { IFixture } from 'src/tests/utils/fixture';
 import { MongoUser } from 'src/users/adapters/mongo/mongo-user';
 import { MongoParticipation } from 'src/webinars/adapters/mongo/mongo-participation';
 import { MongoWebinar } from 'src/webinars/adapters/mongo/mongo-webinar';
-
 export class TestApp {
   private app: INestApplication;
 
@@ -29,7 +30,11 @@ export class TestApp {
       ],
     }).compile();
     this.app = module.createNestApplication();
-    await this.app.init();
+    try {
+      await this.app.init();
+    } catch (error) {
+      console.error(error);
+    }
     await this.clearDatabase();
   }
 

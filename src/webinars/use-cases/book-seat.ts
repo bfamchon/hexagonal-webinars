@@ -1,5 +1,5 @@
+import { CommandHandler, ICommand, ICommandHandler } from '@nestjs/cqrs';
 import { IMailer } from 'src/core/ports/mailer.interface';
-import { Executable } from 'src/shared/executable';
 import { User } from 'src/users/entities/user.entity';
 import { IUserRepository } from 'src/users/ports/user-repository.interface';
 import { Participation } from 'src/webinars/entities/participation.entity';
@@ -16,14 +16,24 @@ type Request = {
 };
 type Response = void;
 
-export class BookSeat implements Executable<Request, Response> {
+export class BookSeatCommand implements ICommand {
+  constructor(
+    public readonly user: User,
+    public readonly webinarId: string,
+  ) {}
+}
+
+@CommandHandler(BookSeatCommand)
+export class BookSeatCommandHandler
+  implements ICommandHandler<BookSeatCommand, Response>
+{
   constructor(
     private readonly participationRepository: IParticipationRepository,
     private readonly userRepository: IUserRepository,
     private readonly webinarRepository: IWebinarRepository,
     private readonly mailer: IMailer,
   ) {}
-  async execute({ webinarId, user }: Request): Promise<Response> {
+  async execute({ webinarId, user }: BookSeatCommand): Promise<Response> {
     const webinar = await this.webinarRepository.findById(webinarId);
     if (!webinar) {
       throw new WebinarNotFoundException();

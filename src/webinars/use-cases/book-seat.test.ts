@@ -7,11 +7,14 @@ import { InMemoryWebinarRepository } from 'src/webinars/adapters/in-memory-webin
 import { Participation } from 'src/webinars/entities/participation.entity';
 import { Webinar } from 'src/webinars/entities/webinar.entity';
 import { IParticipationRepository } from 'src/webinars/ports/participation-repository.interface';
-import { BookSeat } from 'src/webinars/use-cases/book-seat';
+import {
+  BookSeatCommand,
+  BookSeatCommandHandler,
+} from 'src/webinars/use-cases/book-seat';
 
 describe('Feature: Book seat', () => {
   let webinarRepository: InMemoryWebinarRepository;
-  let useCase: BookSeat;
+  let useCase: BookSeatCommandHandler;
   const webinar = new Webinar({
     id: 'webinar-id',
     organizerId: 'alice-id',
@@ -53,7 +56,7 @@ describe('Feature: Book seat', () => {
       testUser.charles,
     ]);
 
-    useCase = new BookSeat(
+    useCase = new BookSeatCommandHandler(
       participationRepository,
       userRepository,
       webinarRepository,
@@ -61,10 +64,7 @@ describe('Feature: Book seat', () => {
     );
   });
   describe('Scenario: happy path', () => {
-    const payload = {
-      user: testUser.bob,
-      webinarId: 'webinar-id',
-    };
+    const payload = new BookSeatCommand(testUser.bob, 'webinar-id');
     it('should book a seat', async () => {
       await useCase.execute(payload);
       const bobParticipation =
@@ -104,10 +104,8 @@ describe('Feature: Book seat', () => {
   });
 
   describe('Scenario: webinar does not exists', () => {
-    const payload = {
-      user: testUser.bob,
-      webinarId: 'does-not-exist',
-    };
+    const payload = new BookSeatCommand(testUser.bob, 'does-not-exist');
+
     it('should not book a seat but throw an error', async () => {
       await expect(useCase.execute(payload)).rejects.toThrow(
         'Webinar not found',
@@ -122,10 +120,8 @@ describe('Feature: Book seat', () => {
   });
 
   describe('Scenario: webinar is full', () => {
-    const payload = {
-      user: testUser.charles,
-      webinarId: 'webinar-id',
-    };
+    const payload = new BookSeatCommand(testUser.charles, 'webinar-id');
+
     it('should not book a seat but throw an error', async () => {
       await expect(useCase.execute(payload)).rejects.toThrow(
         'You are already participating in this webinar',
@@ -134,10 +130,8 @@ describe('Feature: Book seat', () => {
   });
 
   describe('Scenario: webinar is full', () => {
-    const payload = {
-      user: testUser.bob,
-      webinarId: 'webinar-full-id',
-    };
+    const payload = new BookSeatCommand(testUser.bob, 'webinar-full-id');
+
     it('should not book a seat but throw an error', async () => {
       await expect(useCase.execute(payload)).rejects.toThrow('Webinar is full');
       const bobParticipation =
