@@ -1,12 +1,15 @@
 import { Module } from '@nestjs/common';
 import { getModelToken, MongooseModule } from '@nestjs/mongoose';
 import { CommonModule } from 'src/core/common.module';
+import { I_GET_WEBINAR_BY_ID_QUERY } from 'src/webinars/ports/get-webinar-by-id-query.interface';
 
 import { I_DATE_GENERATOR } from 'src/core/ports/date-generator.interface';
 import { I_ID_GENERATOR } from 'src/core/ports/id-generator.interface';
 import { I_MAILER } from 'src/core/ports/mailer.interface';
+import { MongoUser } from 'src/users/adapters/mongo/mongo-user';
 import { I_USER_REPOSITORY } from 'src/users/ports/user-repository.interface';
 import { UserModule } from 'src/users/users.module';
+import { MongoGetWebinarByIdQuery } from 'src/webinars/adapters/mongo/mongo-get-webinar-by-id-query';
 import { MongoParticipation } from 'src/webinars/adapters/mongo/mongo-participation';
 import { MongoParticipationRepository } from 'src/webinars/adapters/mongo/mongo-participation-repository';
 import { MongoWebinar } from 'src/webinars/adapters/mongo/mongo-webinar';
@@ -41,6 +44,20 @@ import { OrganizeWebinars } from 'src/webinars/use-cases/organize-webinars';
   ],
   controllers: [WebinarController, ParticipationController],
   providers: [
+    {
+      provide: I_GET_WEBINAR_BY_ID_QUERY,
+      inject: [
+        getModelToken(MongoWebinar.CollectionName),
+        getModelToken(MongoParticipation.CollectionName),
+        getModelToken(MongoUser.CollectionName),
+      ],
+      useFactory: (webinarModel, participationModel, userModel) =>
+        new MongoGetWebinarByIdQuery(
+          webinarModel,
+          participationModel,
+          userModel,
+        ),
+    },
     {
       provide: I_WEBINAR_REPOSITORY,
       inject: [getModelToken(MongoWebinar.CollectionName)],

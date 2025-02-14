@@ -1,3 +1,4 @@
+import { WebinarDTO } from 'src/webinars/dto/webinar.dto';
 import { z } from 'zod';
 
 export namespace WebinarAPI {
@@ -37,5 +38,9 @@ export namespace WebinarAPI {
   export namespace BookSeat {
     export type Request = void;
     export type Response = void;
+  }
+
+  export namespace GetWebinarById {
+    export type Response = WebinarDTO;
   }
 }
